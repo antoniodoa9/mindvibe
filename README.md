@@ -39,6 +39,10 @@ Sobre la versión entregada en la asignatura hemos mejorado el aspecto de la web
 2. Desde la carpeta `app`, ejecutar `mvn spring-boot:run`.
 3. Abrir [http://localhost:8080](http://localhost:8080) en el navegador.
 
+Hemos comprobado que el proyecto compila y arranca con Java 21 y que todas las pantallas funcionan: alta, edición y borrado de usuarios y de sus dispositivos, y la página de error.
+
+![Lista de usuarios del prototipo en Spring Boot](documentacion/captura_prototipo_spring.png)
+
 La consola de la base de datos H2 está en [http://localhost:8080/h2](http://localhost:8080/h2), con la URL JDBC `jdbc:h2:file:./database` y el usuario `sa` sin contraseña (es una base de datos local de prueba).
 
 ## Estructura del repositorio
