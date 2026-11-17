@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MindVibe | Panel de administración (demostración)</title>
+<link rel="icon" href="assets/icono-mindvibe.png">
+<link rel="stylesheet" href="assets/estilo.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html"><img src="assets/icono-mindvibe.png" alt=""><span>MindVibe</span></a>
+    <nav><a href="index.html">Volver a la presentación</a></nav>
+  </div>
+</header>
+
+<div class="panel-head">
+  <div class="wrap">
+    <h1>Panel de administración</h1>
+    <p>Gestión de usuarios y de los cascos EEG asociados a cada uno</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="notice">Esta es una demostración que funciona en tu navegador: los cambios se guardan solo en este navegador y no se envían a ningún servidor. Los datos de ejemplo son inventados. <a href="#" id="reset">Restaurar los datos de ejemplo</a>.</div>
+
+  <div class="stats">
+    <div class="stat"><b id="n-users">0</b><span>usuarios</span></div>
+    <div class="stat"><b id="n-devices">0</b><span>dispositivos</span></div>
+  </div>
+
+  <section style="padding:0">
+    <div class="toolbar">
+      <h2 style="margin:0">Usuarios</h2>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <input class="search" id="search" type="search" placeholder="Buscar por nombre o email">
+        <button class="btn btn-sm" id="add-user">Añadir usuario</button>
+      </div>
+    </div>
+    <table class="data">
+      <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Dispositivos</th><th>Operaciones</th></tr></thead>
+      <tbody id="users-body"></tbody>
+    </table>
+  </section>
+
+  <section class="devices" id="devices-section" style="padding:0 0 72px" hidden>
+    <div class="toolbar">
+      <h2 style="margin:0" id="devices-title">Dispositivos</h2>
+      <button class="btn btn-sm" id="add-device">Añadir dispositivo</button>
+    </div>
+    <table class="data">
+      <thead><tr><th>ID</th><th>Modelo</th><th>Batería</th><th>Operaciones</th></tr></thead>
+      <tbody id="devices-body"></tbody>
+    </table>
+  </section>
+  <div style="height:48px"></div>
+</main>
+
+<dialog id="user-dialog">
+  <form method="dialog" id="user-form">
+    <h2 id="user-dialog-title">Añadir usuario</h2>
+    <label for="user-name">Nombre</label>
+    <input type="text" id="user-name" required>
+    <label for="user-email">Email</label>
+    <input type="email" id="user-email" required>
+    <p class="error" id="user-error"></p>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost btn-sm" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-sm">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="device-dialog">
+  <form method="dialog" id="device-form">
+    <h2 id="device-dialog-title">Añadir dispositivo</h2>
+    <label for="device-model">Modelo</label>
+    <input type="text" id="device-model" required placeholder="Por ejemplo, MindVibe Casco v1">
+    <label for="device-battery">Batería (%)</label>
+    <input type="number" id="device-battery" min="0" max="100" required>
+    <p class="error" id="device-error"></p>
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost btn-sm" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-sm">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<footer class="foot">
+  <div class="wrap"><p>Versión estática del prototipo desarrollado con Spring Boot y Thymeleaf para la asignatura Ingeniería del Software (Universidad de Málaga). <a href="https://github.com/antoniodoa9/mindvibe">Código en GitHub</a></p></div>
+</footer>
+
+<script>
+// Datos de ejemplo (inventados)
+var SAMPLE = {
+  nextUserId: 4,
+  nextDeviceId: 5,
+  users: [
+    { id: 1, nombre: "Lucía Romero", email: "lucia.romero@ejemplo.com" },
+    { id: 2, nombre: "Pablo Herrera", email: "pablo.herrera@ejemplo.com" },
+    { id: 3, nombre: "Marta Gil", email: "marta.gil@ejemplo.com" }
+  ],
+  devices: [
+    { id: 1, modelo: "MindVibe Casco v1", bateria: 85, titularId: 1 },
+    { id: 2, modelo: "MindVibe Casco v1", bateria: 15, titularId: 1 },
+    { id: 3, modelo: "MindVibe Casco Lite", bateria: 60, titularId: 2 },
+    { id: 4, modelo: "MindVibe Casco v2", bateria: 100, titularId: 3 }
+  ]
+};
+var STORAGE_KEY = "mindvibe-demo";
+var state = null;
+var selectedUserId = null;
+var editingUserId = null;
+var editingDeviceId = null;
+
+function copySample() {
+  return JSON.parse(JSON.stringify(SAMPLE));
+}
+
+function loadState() {
+  var saved = null;
+  try {
+    saved = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    saved = null;
+  }
+  if (saved) {
+    try {
+      state = JSON.parse(saved);
+      return;
+    } catch (e) {
+      state = null;
+    }
+  }
+  state = copySample();
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    // Si el navegador no deja guardar, los datos se quedan solo en memoria
+  }
+}
+
+function escapeHtml(text) {
+  var div = document.createElement("div");
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
+function findUser(id) {
+  for (var i = 0; i < state.users.length; i++) {
+    if (state.users[i].id === id) {
+      return state.users[i];
+    }
+  }
+  return null;
+}
+
+function findDevice(id) {
+  for (var i = 0; i < state.devices.length; i++) {
+    if (state.devices[i].id === id) {
+      return state.devices[i];
+    }
+  }
+  return null;
+}
+
+function countDevices(userId) {
+  var count = 0;
+  for (var i = 0; i < state.devices.length; i++) {
+    if (state.devices[i].titularId === userId) {
+      count = count + 1;
+    }
+  }
+  return count;
+}
+
+function renderUsers() {
+  var body = document.getElementById("users-body");
+  var filter = document.getElementById("search").value.toLowerCase();
+  var html = "";
+  var shown = 0;
+  for (var i = 0; i < state.users.length; i++) {
+    var u = state.users[i];
+    var text = (u.nombre + " " + u.email).toLowerCase();
+    if (filter !== "" && text.indexOf(filter) === -1) {
+      continue;
+    }
+    shown = shown + 1;
+    var rowClass = "";
+    if (u.id === selectedUserId) {
+      rowClass = ' class="selected"';
+    }
+    html += "<tr" + rowClass + ">";
+    html += "<td>" + u.id + "</td>";
+    html += "<td>" + escapeHtml(u.nombre) + "</td>";
+    html += "<td>" + escapeHtml(u.email) + "</td>";
+    html += "<td>" + countDevices(u.id) + "</td>";
+    html += '<td><div class="actions">';
+    html += '<button class="btn btn-ghost btn-sm" onclick="showDevices(' + u.id + ')">Ver dispositivos</button>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="openUserDialog(' + u.id + ')">Editar</button>';
+    html += '<button class="btn btn-danger btn-sm" onclick="deleteUser(' + u.id + ')">Eliminar</button>';
+    html += "</div></td></tr>";
+  }
+  if (shown === 0) {
+    html = '<tr><td colspan="5" class="empty">No hay usuarios que mostrar</td></tr>';
+  }
+  body.innerHTML = html;
+  document.getElementById("n-users").textContent = state.users.length;
+  document.getElementById("n-devices").textContent = state.devices.length;
+}
+
+function renderDevices() {
+  var section = document.getElementById("devices-section");
+  var user = findUser(selectedUserId);
+  if (user === null) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  document.getElementById("devices-title").textContent = "Dispositivos de " + user.nombre;
+  var html = "";
+  for (var i = 0; i < state.devices.length; i++) {
+    var d = state.devices[i];
+    if (d.titularId !== user.id) {
+      continue;
+    }
+    var lowClass = "";
+    if (Number(d.bateria) < 20) {
+      lowClass = " low";
+    }
+    html += "<tr>";
+    html += "<td>" + d.id + "</td>";
+    html += "<td>" + escapeHtml(d.modelo) + "</td>";
+    html += '<td><span class="battery' + lowClass + '"><i style="--pct:' + Number(d.bateria) + '%"></i>' + Number(d.bateria) + " %</span></td>";
+    html += '<td><div class="actions">';
+    html += '<button class="btn btn-ghost btn-sm" onclick="openDeviceDialog(' + d.id + ')">Editar</button>';
+    html += '<button class="btn btn-danger btn-sm" onclick="deleteDevice(' + d.id + ')">Eliminar</button>';
+    html += "</div></td></tr>";
+  }
+  if (html === "") {
+    html = '<tr><td colspan="4" class="empty">Este usuario todavía no tiene dispositivos</td></tr>';
+  }
+  document.getElementById("devices-body").innerHTML = html;
+}
+
+function renderAll() {
+  renderUsers();
+  renderDevices();
+}
+
+function showDevices(userId) {
+  selectedUserId = userId;
+  renderAll();
+  document.getElementById("devices-section").scrollIntoView({ behavior: "smooth" });
+}
+
+function openUserDialog(userId) {
+  editingUserId = userId;
+  document.getElementById("user-error").textContent = "";
+  if (userId === null) {
+    document.getElementById("user-dialog-title").textContent = "Añadir usuario";
+    document.getElementById("user-name").value = "";
+    document.getElementById("user-email").value = "";
+  } else {
+    var user = findUser(userId);
+    document.getElementById("user-dialog-title").textContent = "Editar usuario";
+    document.getElementById("user-name").value = user.nombre;
+    document.getElementById("user-email").value = user.email;
+  }
+  document.getElementById("user-dialog").showModal();
+}
+
+function saveUser(event) {
+  event.preventDefault();
+  var nombre = document.getElementById("user-name").value.trim();
+  var email = document.getElementById("user-email").value.trim();
+  // Igual que en la base de datos, el nombre y el email no se pueden repetir
+  for (var i = 0; i < state.users.length; i++) {
+    var other = state.users[i];
+    if (other.id === editingUserId) {
+      continue;
+    }
+    if (other.nombre.toLowerCase() === nombre.toLowerCase()) {
+      document.getElementById("user-error").textContent = "Ya existe un usuario con ese nombre.";
+      return;
+    }
+    if (other.email.toLowerCase() === email.toLowerCase()) {
+      document.getElementById("user-error").textContent = "Ya existe un usuario con ese email.";
+      return;
+    }
+  }
+  if (editingUserId === null) {
+    state.users.push({ id: state.nextUserId, nombre: nombre, email: email });
+    state.nextUserId = state.nextUserId + 1;
+  } else {
+    var user = findUser(editingUserId);
+    user.nombre = nombre;
+    user.email = email;
+  }
+  saveState();
+  document.getElementById("user-dialog").close();
+  renderAll();
+}
+
+function deleteUser(userId) {
+  var user = findUser(userId);
+  var n = countDevices(userId);
+  if (!confirm("¿Eliminar a " + user.nombre + " y sus " + n + " dispositivos?")) {
+    return;
+  }
+  // Al borrar un usuario se borran también sus dispositivos (CascadeType.REMOVE)
+  var remainingDevices = [];
+  for (var i = 0; i < state.devices.length; i++) {
+    if (state.devices[i].titularId !== userId) {
+      remainingDevices.push(state.devices[i]);
+    }
+  }
+  state.devices = remainingDevices;
+  var remainingUsers = [];
+  for (var j = 0; j < state.users.length; j++) {
+    if (state.users[j].id !== userId) {
+      remainingUsers.push(state.users[j]);
+    }
+  }
+  state.users = remainingUsers;
+  if (selectedUserId === userId) {
+    selectedUserId = null;
+  }
+  saveState();
+  renderAll();
+}
+
+function openDeviceDialog(deviceId) {
+  editingDeviceId = deviceId;
+  document.getElementById("device-error").textContent = "";
+  if (deviceId === null) {
+    document.getElementById("device-dialog-title").textContent = "Añadir dispositivo";
+    document.getElementById("device-model").value = "";
+    document.getElementById("device-battery").value = 100;
+  } else {
+    var device = findDevice(deviceId);
+    document.getElementById("device-dialog-title").textContent = "Editar dispositivo";
+    document.getElementById("device-model").value = device.modelo;
+    document.getElementById("device-battery").value = device.bateria;
+  }
+  document.getElementById("device-dialog").showModal();
+}
+
+function saveDevice(event) {
+  event.preventDefault();
+  var modelo = document.getElementById("device-model").value.trim();
+  var bateria = Number(document.getElementById("device-battery").value);
+  if (isNaN(bateria) || bateria < 0 || bateria > 100) {
+    document.getElementById("device-error").textContent = "La batería debe estar entre 0 y 100.";
+    return;
+  }
+  if (editingDeviceId === null) {
+    state.devices.push({ id: state.nextDeviceId, modelo: modelo, bateria: bateria, titularId: selectedUserId });
+    state.nextDeviceId = state.nextDeviceId + 1;
+  } else {
+    var device = findDevice(editingDeviceId);
+    device.modelo = modelo;
+    device.bateria = bateria;
+  }
+  saveState();
+  document.getElementById("device-dialog").close();
+  renderAll();
+}
+
+function deleteDevice(deviceId) {
+  if (!confirm("¿Eliminar este dispositivo?")) {
+    return;
+  }
+  var remaining = [];
+  for (var i = 0; i < state.devices.length; i++) {
+    if (state.devices[i].id !== deviceId) {
+      remaining.push(state.devices[i]);
+    }
+  }
+  state.devices = remaining;
+  saveState();
+  renderAll();
+}
+
+document.getElementById("add-user").addEventListener("click", function () { openUserDialog(null); });
+document.getElementById("add-device").addEventListener("click", function () { openDeviceDialog(null); });
+document.getElementById("user-form").addEventListener("submit", saveUser);
+document.getElementById("device-form").addEventListener("submit", saveDevice);
+document.getElementById("search").addEventListener("input", renderUsers);
+document.getElementById("reset").addEventListener("click", function (event) {
+  event.preventDefault();
+  state = copySample();
+  selectedUserId = null;
+  saveState();
+  renderAll();
+});
+var closeButtons = document.querySelectorAll("[data-close]");
+for (var k = 0; k < closeButtons.length; k++) {
+  closeButtons[k].addEventListener("click", function () { this.closest("dialog").close(); });
+}
+
+loadState();
+renderAll();
+</script>
+</body>
+</html>

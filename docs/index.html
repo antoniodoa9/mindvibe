@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MindVibe | Música que se adapta a tu actividad cerebral</title>
+<meta name="description" content="MindVibe: concepto de casco EEG que detecta el estado emocional y adapta la música en tiempo real. Proyecto de Ingeniería del Software, Universidad de Málaga.">
+<link rel="icon" href="assets/icono-mindvibe.png">
+<link rel="stylesheet" href="assets/estilo.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#inicio"><img src="assets/icono-mindvibe.png" alt=""><span>MindVibe</span></a>
+    <nav>
+      <a href="#problema">El problema</a>
+      <a href="#funciona">Cómo funciona</a>
+      <a href="#diseno">Diseño</a>
+      <a href="#equipo">Equipo</a>
+      <a class="btn btn-sm" href="panel.html">Panel de administración</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="wrap hero-in">
+    <div>
+      <p class="eyebrow">Proyecto de Ingeniería del Software</p>
+      <h1>Escucha lo que sientes,<br>transforma lo que piensas</h1>
+      <p class="lead">MindVibe es el concepto de un casco con sensores de electroencefalografía (EEG) que interpreta la actividad cerebral del usuario y adapta en tiempo real la música que escucha, para ayudarle a relajarse, concentrarse o gestionar el estrés.</p>
+      <div class="cta">
+        <a class="btn" href="panel.html">Probar el panel de administración</a>
+        <a class="btn btn-ghost" href="https://github.com/antoniodoa9/mindvibe">Ver el código</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <img src="assets/icono-mindvibe.png" alt="">
+      <svg class="wave" viewBox="0 0 400 80" preserveAspectRatio="none"><path d="M0 40 Q 20 10 40 40 T 80 40 T 120 40 Q 140 70 160 40 T 200 40 Q 215 5 230 40 T 260 40 T 300 40 Q 320 60 340 40 T 400 40"/></svg>
+    </div>
+  </div>
+</section>
+
+<section id="problema" class="band">
+  <div class="wrap">
+    <h2>El problema que queremos resolver</h2>
+    <div class="grid3">
+      <div class="card"><h3>Estrés y falta de concentración</h3><p>Estudiantes y profesionales viven con un nivel de exigencia que afecta a su bienestar emocional y a su rendimiento.</p></div>
+      <div class="card"><h3>Música sin personalizar</h3><p>Las aplicaciones de música y las listas predefinidas no tienen en cuenta cómo se siente el usuario en cada momento.</p></div>
+      <div class="card"><h3>Tecnología EEG accesible</h3><p>Los sensores de EEG son cada vez más baratos, lo que permite llevar esta tecnología a un producto de consumo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="funciona">
+  <div class="wrap">
+    <h2>Cómo funciona</h2>
+    <ol class="steps">
+      <li><span>1</span><h3>El casco mide la actividad cerebral</h3><p>Los sensores EEG registran la señal eléctrica del cerebro y la envían por Bluetooth a la aplicación móvil.</p></li>
+      <li><span>2</span><h3>La IA estima el estado emocional</h3><p>Un modelo de aprendizaje automático interpreta las señales y detecta si el usuario está estresado, relajado o concentrado.</p></li>
+      <li><span>3</span><h3>La música se adapta</h3><p>El sistema ajusta la música (por ejemplo, su ritmo) hacia el estado que el usuario ha elegido: relajación, concentración o activación.</p></li>
+      <li><span>4</span><h3>El usuario ve su evolución</h3><p>El historial muestra la actividad cerebral y los estados emocionales a lo largo del tiempo, y se puede exportar.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Objetivos del sistema</h2>
+    <ul class="goals">
+      <li><b>K1</b> Detectar en tiempo real el estado emocional del usuario y ajustar la música para mejorar su bienestar.</li>
+      <li><b>K2</b> Permitir que cada usuario personalice sus preferencias musicales y la configuración del sistema.</li>
+      <li><b>K3</b> Conectar el casco EEG con la aplicación móvil de forma estable y automática por Bluetooth.</li>
+      <li><b>K4</b> Ofrecer un análisis detallado de la actividad cerebral del usuario.</li>
+      <li><b>K5</b> Entrenar algoritmos de IA que mejoren la precisión de la detección con el uso.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="diseno">
+  <div class="wrap">
+    <h2>Diseño del software</h2>
+    <p class="sub">El proyecto ha seguido el ciclo completo de Ingeniería del Software: entrevista con el cliente, plan de proyecto con diagrama de Gantt, documento de requisitos (13 requisitos funcionales de usuario y sus requisitos del sistema), modelado con UML, diseño con patrones y un prototipo funcional.</p>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-img="assets/diagrama-clases.png" data-cap="Diagrama de clases del sistema">Clases</button>
+      <button class="tab" data-img="assets/diagrama-casos-uso.png" data-cap="Diagrama de casos de uso del usuario">Casos de uso</button>
+      <button class="tab" data-img="assets/diagrama-secuencia.png" data-cap="Diagrama de secuencia del inicio de sesión y la configuración">Secuencia</button>
+    </div>
+    <figure class="diagram"><a id="diag-link" href="assets/diagrama-clases.png"><img id="diag" src="assets/diagrama-clases.png" alt="Diagrama de clases del sistema"></a><figcaption id="diag-cap">Diagrama de clases del sistema</figcaption></figure>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap proto">
+    <div>
+      <h2>Prototipo: panel de administración</h2>
+      <p>Hemos desarrollado el panel que usaría el administrador para gestionar los usuarios de MindVibe y los cascos asociados a cada uno (requisito RF10). Está hecho con Java, Spring Boot, Thymeleaf y una base de datos H2, con una relación uno a muchos entre usuarios y dispositivos.</p>
+      <p>Aquí puedes probar una versión de demostración que funciona directamente en el navegador, con los mismos datos y operaciones.</p>
+      <a class="btn" href="panel.html">Abrir la demostración</a>
+    </div>
+    <ul class="stack">
+      <li>Java 18</li><li>Spring Boot 3</li><li>Thymeleaf</li><li>Spring Data JPA</li><li>H2</li><li>Maven</li><li>UML (Visual Paradigm)</li><li>GanttProject</li>
+    </ul>
+  </div>
+</section>
+
+<section id="equipo">
+  <div class="wrap">
+    <h2>Equipo</h2>
+    <div class="grid3 team">
+      <div class="card"><h3>Antonio Sánchez Doña</h3><p>Parte técnica y revisión continua del proyecto.</p></div>
+      <div class="card"><h3>Aissa Omar El Hammouti Chachoui</h3><p>Búsqueda de información e integración de los contenidos de la asignatura.</p></div>
+      <div class="card"><h3>Ilyass Amal Amchatar</h3><p>Maquetación, bocetos y lluvia de ideas.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>MindVibe es un proyecto académico (concepto de producto) de la asignatura Ingeniería del Software, Grado en Ingeniería de la Salud, Universidad de Málaga, curso 2024/25. No es un producto comercial ni un dispositivo médico.</p>
+    <p><a href="https://github.com/antoniodoa9/mindvibe">Código y documentación en GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function () {
+      for (var j = 0; j < tabs.length; j++) { tabs[j].classList.remove('active'); }
+      this.classList.add('active');
+      document.getElementById('diag').src = this.dataset.img;
+      document.getElementById('diag').alt = this.dataset.cap;
+      document.getElementById('diag-link').href = this.dataset.img;
+      document.getElementById('diag-cap').textContent = this.dataset.cap;
+    });
+  }
+</script>
+</body>
+</html>

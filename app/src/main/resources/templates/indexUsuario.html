@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- GRUPO I DE INGENIERIA DEL SOFTWARE -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio | MindVibe</title>
+    <link rel="icon" th:href="@{/icono-mindvibe.png}">
+    <link rel="stylesheet" th:href="@{/css/mindvibe.css}">
+</head>
+<body>
+<header th:replace="~{fragments :: cabecera}"></header>
+<div class="panel-head">
+    <div class="wrap">
+        <h1>Panel de administración</h1>
+        <p>Gestión de los usuarios de MindVibe y de los cascos EEG asociados a cada uno</p>
+    </div>
+</div>
+<main class="wrap" style="padding: 32px 24px 72px">
+    <div class="proto" style="padding-top:16px">
+        <div>
+            <h2>¿Qué quieres hacer?</h2>
+            <p>Desde este panel el administrador del sistema puede dar de alta, modificar y eliminar usuarios, y gestionar los dispositivos (cascos EEG) que tiene asociados cada uno.</p>
+            <div class="cta">
+                <a class="btn" th:href="@{/listUsuario}">Ver la lista de usuarios</a>
+                <a class="btn btn-ghost" th:href="@{/addUsuario}">Añadir un usuario</a>
+            </div>
+        </div>
+        <div style="text-align:center">
+            <img th:src="@{/MindVibe.jpg}" alt="Logo de MindVibe" style="max-width:340px">
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments :: pie}"></footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- GRUPO I DE INGENIERIA DEL SOFTWARE -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Añadir usuario | MindVibe</title>
+    <link rel="icon" th:href="@{/icono-mindvibe.png}">
+    <link rel="stylesheet" th:href="@{/css/mindvibe.css}">
+</head>
+<body>
+<header th:replace="~{fragments :: cabecera}"></header>
+<div class="panel-head">
+    <div class="wrap">
+        <h1>Añadir usuario</h1>
+        <p>Alta de un nuevo usuario en el sistema</p>
+    </div>
+</div>
+<main class="wrap" style="padding: 32px 24px 72px">
+    <div class="card" style="max-width:520px">
+        <form th:action="@{/usuario}" th:object="${usuario}" th:method="post">
+            <label for="nombre">Nombre</label>
+            <input type="text" th:field="*{nombre}" required />
+            <label for="email">Email</label>
+            <input type="email" th:field="*{email}" required />
+            <div class="form-actions">
+                <a class="btn btn-ghost btn-sm" th:href="@{/}">Cancelar</a>
+                <button type="reset" class="btn btn-ghost btn-sm">Borrar</button>
+                <button type="submit" class="btn btn-sm">Crear usuario</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments :: pie}"></footer>
+</body>
+</html>

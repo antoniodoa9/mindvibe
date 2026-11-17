@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- GRUPO I DE INGENIERIA DEL SOFTWARE -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Usuarios | MindVibe</title>
+    <link rel="icon" th:href="@{/icono-mindvibe.png}">
+    <link rel="stylesheet" th:href="@{/css/mindvibe.css}">
+</head>
+<body>
+<header th:replace="~{fragments :: cabecera}"></header>
+<div class="panel-head">
+    <div class="wrap">
+        <h1>Usuarios</h1>
+        <p>Lista de usuarios registrados en el sistema</p>
+    </div>
+</div>
+<main class="wrap" style="padding: 32px 24px 72px">
+    <div class="toolbar">
+        <h2 style="margin:0">Lista de usuarios</h2>
+        <a class="btn btn-sm" th:href="@{/addUsuario}">Añadir usuario</a>
+    </div>
+    <table class="data">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(usuarios)}">
+                <td colspan="4" class="empty">Todavía no hay usuarios registrados</td>
+            </tr>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.id}"></td>
+                <td th:text="${usuario.nombre}"></td>
+                <td th:text="${usuario.email}"></td>
+                <td>
+                    <div class="actions">
+                        <a class="btn btn-ghost btn-sm" th:href="@{/listUsuarioDispositivos/{usuarioId}(usuarioId=${usuario.id})}">Ver dispositivos</a>
+                        <a class="btn btn-ghost btn-sm" th:href="@{/addDispositivo/{usuarioId}(usuarioId=${usuario.id})}">Añadir dispositivo</a>
+                        <form th:method="GET" th:action="@{/editUsuario/{id}(id=${usuario.id})}" style="display: inline;">
+                            <button type="submit" class="btn btn-ghost btn-sm">Editar</button>
+                        </form>
+                        <form th:method="DELETE" th:action="@{/usuario/{id}(id=${usuario.id})}" style="display: inline;" onsubmit="return confirm('¿Eliminar este usuario y sus dispositivos?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/}">Volver al inicio</a></p>
+</main>
+<footer th:replace="~{fragments :: pie}"></footer>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!-- GRUPO I DE INGENIERIA DEL SOFTWARE -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="nav" th:fragment="cabecera">
+    <div class="wrap nav-in">
+        <a class="brand" th:href="@{/}"><img th:src="@{/icono-mindvibe.png}" alt=""><span>MindVibe</span></a>
+        <nav>
+            <a th:href="@{/listUsuario}">Usuarios</a>
+            <a class="btn btn-sm" th:href="@{/addUsuario}">Añadir usuario</a>
+        </nav>
+    </div>
+</header>
+<footer class="foot" th:fragment="pie">
+    <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap">
+        <p style="margin:0; max-width:640px">Prototipo del panel de administración de MindVibe, realizado por Ilyass Amal Amchatar, Aissa Omar El Hammouti Chachoui y Antonio Sánchez Doña para la asignatura Ingeniería del Software del Grado en Ingeniería de la Salud (Universidad de Málaga).</p>
+        <div style="display:flex; gap:12px; background:#fff; padding:8px 12px; border-radius:8px">
+            <img th:src="@{/LogoUMA.jpg}" alt="Logo Universidad de Málaga" height="44">
+            <img th:src="@{/LogoETSI.png}" alt="Logo ETSI Informática" height="44">
+        </div>
+    </div>
+</footer>
+</body>
+</html>

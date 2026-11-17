@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- GRUPO I DE INGENIERIA DEL SOFTWARE -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dispositivos | MindVibe</title>
+    <link rel="icon" th:href="@{/icono-mindvibe.png}">
+    <link rel="stylesheet" th:href="@{/css/mindvibe.css}">
+</head>
+<body>
+<header th:replace="~{fragments :: cabecera}"></header>
+<div class="panel-head">
+    <div class="wrap">
+        <h1>Dispositivos</h1>
+        <p>Cascos EEG asociados al usuario</p>
+    </div>
+</div>
+<main class="wrap" style="padding: 32px 24px 72px">
+    <div class="toolbar">
+        <h2 style="margin:0">Dispositivos de <span th:text="${usuario.nombre}">Usuario</span></h2>
+        <a class="btn btn-sm" th:href="@{/addDispositivo/{usuarioId}(usuarioId=${usuario.id})}">Añadir dispositivo</a>
+    </div>
+    <table class="data">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>Batería</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(dispositivos)}">
+                <td colspan="4" class="empty">Este usuario todavía no tiene dispositivos</td>
+            </tr>
+            <tr th:each="dispositivo : ${dispositivos}">
+                <td th:text="${dispositivo.id}"></td>
+                <td th:text="${dispositivo.modelo}"></td>
+                <td th:text="${dispositivo.bateria}"></td>
+                <td>
+                    <div class="actions">
+                        <form th:method="GET" th:action="@{/editDispositivo/{id}(id=${dispositivo.id})}" style="display: inline;">
+                            <button type="submit" class="btn btn-ghost btn-sm">Editar</button>
+                        </form>
+                        <form th:method="DELETE" th:action="@{/dispositivo/{id}(id=${dispositivo.id})}" style="display: inline;" onsubmit="return confirm('¿Eliminar este dispositivo?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/listUsuario}">Volver a la lista de usuarios</a></p>
+</main>
+<footer th:replace="~{fragments :: pie}"></footer>
+</body>
+</html>
